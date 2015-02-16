@@ -13,6 +13,12 @@
     </script>
 </head>
 <body id='content' class='sapUiBody'>
+    <style>
+        .intro{
+            font-size: 20px;
+            font-family: arial;
+        }
+    </style>
     <script>
         //Configure traitify api
         Traitify.setPublicKey("uhutbgmj5eo4thjdvj1di9j9vp");
@@ -23,21 +29,30 @@
         //Create a flex box for storing the traitify assessment
         var assessmentBox = new sap.m.FlexBox();
         assessmentBox.addStyleClass('assessment');
+        assessmentBox.displayInline = true;
+
+        var intro = new sap.m.Text({
+            class: 'intro',
+            text: 'Home for Humanity\n\nAn online application for matching landlords and tenants in the city of San Francisco.'+
+            '\n\nThe site\'s goal is to streamline the selection process for all parties when searching for housing and to improve relations between renters and property owners.'+
+            '\n\nEach candidate completes an image based personality assessment to match them with a list of compatible landlords or tenants.'
+        });
+        intro.addStyleClass('intro');
+        intro.setWidth('400px');
+
         //Define open ui pages
         //Create home page
         var homePage = new sap.m.Page('homePage', {
             title: 'Welcome to Home For Humanity',
             content: [
-                new sap.m.Text({
-                    text: 'Home For Humanity is designed to match renters with property owners '+
-                    'based on personality traits in order to improve relations between tenants and '+
-                    'landlords. To get started click here. Once you have completed the personality '+
-                    'assessment and provided some basic information you will be shown a list of '+
-                    'compatible landlords or tenants that you may contact through email.'
-                }),
+                new sap.m.Image({
+                    src: 'https://static-2.gumroad.com/res/gumroad/files/d5369fd3e1c04f4ab6f08686684ba7bd/original/san-francisco-is-americas-snobbiest-city-according-to-the-rest-of-the-country.jpg',
+                    width: '400px'
+                                    }),
+                intro,
                 new sap.m.Button({
                     text: 'Get started',
-                    width: '200px',
+                    width: '100%',
                     press: function(){
                         app.to('assessmentPage');
                     }
@@ -53,8 +68,11 @@
                         assessmentBox
                     ]
                 }),
+                new sap.m.Panel({
+                    width: '300px',
+                    content: [
                 new sap.m.Button({
-                    text: 'Get started',
+                    text: 'Start Assessment',
                     width: '200px',
                     press: function(){
                         //Get the assessment id from the model
@@ -142,6 +160,8 @@
                         changeSlide();
                         this.destroy(true);
                     }
+                })
+                    ]
                 }),
                 new sap.m.Panel({
                     width: '300px',
