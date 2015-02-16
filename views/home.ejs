@@ -1,0 +1,219 @@
+<!-- Home For Humanity -->
+<!-- by Brian Cottrell -->
+<!-- 02-10-2015        -->
+<!-- Index View        -->
+
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <script src="https://cdn.traitify.com/lib/v1.js"></script>​
+    <script src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js"
+            data-sap-ui-libs="sap.m" 
+            data-sap-ui-theme="sap_bluecrystal">
+    </script>
+</head>
+<body id='content' class='sapUiBody'>
+    <script>
+        //Configure traitify api
+        Traitify.setPublicKey("uhutbgmj5eo4thjdvj1di9j9vp");
+        Traitify.setHost("https://api-sandbox.traitify.com");
+        Traitify.setVersion("v1");
+        //Traitify assessment id
+        var assessmentId;
+        //Create a flex box for storing the traitify assessment
+        var assessmentBox = new sap.m.FlexBox();
+        assessmentBox.addStyleClass('assessment');
+        //Define open ui pages
+        //Create home page
+        var homePage = new sap.m.Page('homePage', {
+            title: 'Welcome to Home For Humanity',
+            content: [
+                new sap.m.Text({
+                    text: 'Home For Humanity is designed to match renters with property owners '+
+                    'based on personality traits in order to improve relations between tenants and '+
+                    'landlords. To get started click here. Once you have completed the personality '+
+                    'assessment and provided some basic information you will be shown a list of '+
+                    'compatible landlords or tenants that you may contact through email.'
+                }),
+                new sap.m.Button({
+                    text: 'Get started',
+                    width: '200px',
+                    press: function(){
+                        app.to('assessmentPage');
+                    }
+                })
+            ]
+        });
+        //Create Assessment Page
+        var assessmentPage = new sap.m.Page('assessmentPage', {
+            title: 'Assessment Page',
+            content: [
+                new sap.m.Panel({
+                    content: [
+                        assessmentBox
+                    ]
+                }),
+                new sap.m.Button({
+                    text: 'Get started',
+                    width: '200px',
+                    press: function(){
+                        //Get the assessment id from the model
+                        var assessmentId = <%- JSON.stringify(assessmentId) %>;
+                        var positiveResponse;
+                        localStorage.assessment = assessmentId;
+                        //Load the assessment with the id passed from the server
+                        Traitify.ui.load(assessmentId, ".assessment");
+                        //Change the first slide to select tenant or landlord
+                        function changeSlide(){
+                            setTimeout(function(){
+                                if(!document.getElementsByClassName('active')[0]){
+                                    changeSlide();
+                                }else{
+                                    document.getElementsByClassName('active')[0].getElementsByClassName('image')[0].style.background = 'url(http://gentlemaneconomist.com/wp-content/uploads/2014/03/painted-ladies-san-francisco-1024x440.jpg)';
+                                    document.getElementsByClassName('active')[0].getElementsByClassName('image')[0].style.backgroundRepeat = 'no-repeat';
+                                    document.getElementsByClassName('active')[0].getElementsByClassName('image')[0].style.backgroundSize = 'cover';
+                                    document.getElementsByClassName('active')[0].getElementsByClassName('caption')[0].innerHTML = 'Tenant or Landlord';
+                                    document.getElementsByClassName('me')[0].innerHTML = 'Tenant';
+                                    document.getElementsByClassName('not-me')[0].innerHTML = 'Landlord';
+                                    document.getElementsByClassName('me')[0].addEventListener('click', meClicked);
+                                    document.getElementsByClassName('not-me')[0].addEventListener('click', notMeClicked);
+                                    localStorage.slideIndex = 0;
+                                }
+                            }, 100);
+                        }
+                        function meClicked(){
+                            positiveResponse = true;
+                            nextSlide();
+                        }
+                        function notMeClicked(){
+                            positiveResponse = false;
+                            nextSlide();
+                        }
+                        //Replace slides with those more specific to renting
+                        function nextSlide(){
+                            document.getElementsByClassName('me')[0].innerHTML = 'Me';
+                            document.getElementsByClassName('not-me')[0].innerHTML = 'Not Me';
+                            switch(localStorage.slideIndex){
+                                case '0':
+                                    if(positiveResponse){
+                                        localStorage.category = 'tenant'
+                                    }else{
+                                        localStorage.category = 'landlord'
+                                    }
+                                    document.getElementsByClassName('active')[1].getElementsByClassName('image')[0].style.background = "url(http://i.imgur.com/mQBnTzJ.png)";
+                                    document.getElementsByClassName('active')[1].getElementsByClassName('caption')[0].innerHTML = "Hackathon";
+                                break;
+                                case '1':
+                                    if(positiveResponse){
+                                        localStorage.hacker = 'yes'
+                                    }else{
+                                        localStorage.hacker = 'no'
+                                    }
+                                    document.getElementsByClassName('active')[1].getElementsByClassName('image')[0].style.background = "url(http://i.imgur.com/4YVP9OT.jpg)";
+                                    document.getElementsByClassName('active')[1].getElementsByClassName('caption')[0].innerHTML = "Quiet";
+                                break;
+                                case '2':
+                                    if(positiveResponse){
+                                        localStorage.quiet = 'yes'
+                                    }else{
+                                        localStorage.quiet = 'no'
+                                    }
+                                    document.getElementsByClassName('active')[1].getElementsByClassName('image')[0].style.background = "url(http://i.imgur.com/UK9SXmY.jpg?1)";
+                                    document.getElementsByClassName('active')[1].getElementsByClassName('caption')[0].innerHTML = "Pet Lover";
+                                break;
+                                case '3':
+                                    if(positiveResponse){
+                                        localStorage.pets = 'yes'
+                                    }else{
+                                        localStorage.pets = 'no'
+                                    }
+                                break;
+                            }
+                            if(document.getElementsByClassName('active')[1]){
+                                document.getElementsByClassName('active')[1].getElementsByClassName('image')[0].style.backgroundRepeat = "no-repeat";
+                                document.getElementsByClassName('active')[1].getElementsByClassName('image')[0].style.backgroundSize = "cover";
+                                localStorage.slideIndex++;
+                            }
+                            else{
+                                document.getElementsByClassName('assessment')[0].style.display = "block";
+                            }
+                        }
+                        //Replace the first slide when the button is clicked then remove the button
+                        changeSlide();
+                        this.destroy(true);
+                    }
+                }),
+                new sap.m.Panel({
+                    width: '300px',
+                    content: [
+                        new sap.m.Label({
+                            text: 'Name'
+                        }),
+                        new sap.m.Input({
+                            liveChange: function(evn){
+                                localStorage.name = evn.getParameters().value;
+                            }
+                        }),
+                        new sap.m.Label({
+                            text: 'Email Address',
+                        }),
+                        new sap.m.Input({
+                            liveChange: function(evn){
+                                localStorage.email = evn.getParameters().value;
+                            }
+                        }),
+                        new sap.m.Label({
+                            text: 'Objective',
+                        }),
+                        new sap.m.TextArea({
+                            width: '270px',
+                            liveChange: function(evn){
+                                localStorage.objective = evn.getParameters().value;
+                            }
+                        }),
+                        new sap.m.Button({
+                            text: 'Post',
+                            width: '270px',
+                            press: function(){
+                                if(document.getElementsByClassName("tf-personality-traits")[0]){
+                                    //Post all user information to the server
+                                    var xmlhttp = new XMLHttpRequest();
+                                    xmlhttp.open('POST', '/home', true);
+                                    xmlhttp.setRequestHeader('Content-type', 'application/json');
+                                    xmlhttp.send(JSON.stringify({
+                                        'name': localStorage.name,
+                                        'email': localStorage.email,
+                                        'objective': localStorage.objective,
+                                        'personality1': document.getElementsByClassName('name')[0].innerHTML,
+                                        'personality2': document.getElementsByClassName('name')[1].innerHTML,
+                                        'category': localStorage.category,
+                                        'hacker': localStorage.hacker,
+                                        'pets': localStorage.pets,
+                                        'quiet': localStorage.quiet
+                                    }));
+                                }else{
+                                    alert('Please finish the assessment first.');
+                                }
+                            }
+                        })
+                    ]
+                })
+            ]
+        });
+        var resultPage = new sap.m.Page('resultPage', {
+            title: 'Here is list of comatible users',
+            content: [
+                new sap.m.Button({
+                    text: 'Get started',
+                    width: '200px',
+                    press: function(){
+                        app.to('assessmentPage');
+                    }
+                })
+            ]
+        });
+        //Add open ui pages to the application
+        var app = sap.m.App().addPage(homePage).addPage(assessmentPage).placeAt('content');
+    </script>​
+</body>
+</html>
