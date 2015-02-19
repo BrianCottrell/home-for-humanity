@@ -18,6 +18,7 @@ var router      = express.Router();
 //Specify a traitify deck to use
 var deckId      = 'core';
 var assessmentId;
+//var listData    = '';
 
 //Configure body body-parser
 app.use(bodyParser.urlencoded({extend:true}));
@@ -46,15 +47,10 @@ router.route('/home')
         // Use assessment here.
         assessmentId = assessment.id;
     });
-    // Profile.find(function(err, data){
-    //     if(err) 
-    //         console.log(err);
-    //     console.log(data);
-        res.status(200).render('home', {
-            assessmentId: assessmentId,
-            name: 'Brian'
-        });
-    // });
+    res.status(200).render('home', {
+        assessmentId: assessmentId,
+//        listData: listData
+    });
 })
 //Called when a user makes a post to the home page
 .post(function(req, res){
@@ -69,13 +65,26 @@ router.route('/home')
     profile.pets = req.body.pets;
     profile.quiet = req.body.quiet;
     profile.save(function(err){
-        if(err)
+        if(err){
             console.log(err);
-        res.json({message: "post worked"});
+        }
+        res.status(201).json({message: 'path seuccessfully created'});
     });
+//    res.redirect('/results');
 });
 //The results page is displayed when a user completes the assessment
-router.route('/results')
+// router.route('/results')
+// //Called when a user completes the assessment and submits information
+// .get(function(req, res){
+//     listData = Profile.find(function(err, data){
+//         if(err){
+//             console.log(err);
+//         }
+//   //      res.status(200).render('results', {
+//     //        listData: data,
+//       //  });
+//     });
+// });
 
 app.use(router);
 app.listen(port);

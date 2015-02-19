@@ -54,6 +54,9 @@
                     text: 'Get started',
                     width: '100%',
                     press: function(){
+                        localStorage.removeItem('name');
+                        localStorage.removeItem('email');
+                        localStorage.removeItem('objective');
                         app.to('assessmentPage');
                     }
                 })
@@ -192,10 +195,18 @@
                             }
                         }),
                         new sap.m.Button({
-                            text: 'Post',
+                            text: 'Find Matches',
                             width: '270px',
                             press: function(){
-                                if(document.getElementsByClassName("tf-personality-traits")[0]){
+                                if(!localStorage.name){
+                                    alert('Please enter your name');
+                                }else if(!localStorage.email){
+                                    alert('Please enter your email address');
+                                }else if(!localStorage.objective){
+                                    alert('Please describe what you are looking for');
+                                }else if(!document.getElementsByClassName("tf-personality-traits")[0]){
+                                    alert('Please finish the assessment first.');
+                                }else{
                                     //Post all user information to the server
                                     var xmlhttp = new XMLHttpRequest();
                                     xmlhttp.open('POST', '/home', true);
@@ -211,8 +222,6 @@
                                         'pets': localStorage.pets,
                                         'quiet': localStorage.quiet
                                     }));
-                                }else{
-                                    alert('Please finish the assessment first.');
                                 }
                             }
                         })
@@ -220,18 +229,18 @@
                 })
             ]
         });
-        var resultPage = new sap.m.Page('resultPage', {
-            title: 'Here is list of comatible users',
-            content: [
-                new sap.m.Button({
-                    text: 'Get started',
-                    width: '200px',
-                    press: function(){
-                        app.to('assessmentPage');
-                    }
-                })
-            ]
-        });
+        // var resultPage = new sap.m.Page('resultPage', {
+        //     title: 'Here is list of comatible users',
+        //     content: [
+        //         new sap.m.Button({
+        //             text: 'Get started',
+        //             width: '200px',
+        //             press: function(){
+        //                 app.to('assessmentPage');
+        //             }
+        //         }),
+        //     ]
+        // });
         //Add open ui pages to the application
         var app = sap.m.App().addPage(homePage).addPage(assessmentPage).placeAt('content');
     </script>​
