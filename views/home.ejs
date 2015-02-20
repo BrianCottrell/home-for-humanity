@@ -30,7 +30,10 @@
         var assessmentBox = new sap.m.FlexBox();
         assessmentBox.addStyleClass('assessment');
         assessmentBox.displayInline = true;
-
+        var data = <%- JSON.stringify(listData) %>;
+        var results = new sap.m.FlexBox();
+        results.setWidth('90%');
+        results.setDirection('Column');
         var intro = new sap.m.Text({
             class: 'intro',
             text: 'Home for Humanity\n\nAn online application for matching landlords and tenants in the city of San Francisco.'+
@@ -48,7 +51,7 @@
                 new sap.m.Image({
                     src: 'https://static-2.gumroad.com/res/gumroad/files/d5369fd3e1c04f4ab6f08686684ba7bd/original/san-francisco-is-americas-snobbiest-city-according-to-the-rest-of-the-country.jpg',
                     width: '400px'
-                                    }),
+                }),
                 intro,
                 new sap.m.Button({
                     text: 'Get started',
@@ -78,9 +81,9 @@
                     text: 'Start Assessment',
                     width: '200px',
                     press: function(){
-                        //Get the assessment id from the model
-                        var assessmentId = <%- JSON.stringify(assessmentId) %>;
                         var positiveResponse;
+                        //Get the assessment id from the model
+                        assessmentId = <%- JSON.stringify(assessmentId) %>;
                         localStorage.assessment = assessmentId;
                         //Load the assessment with the id passed from the server
                         Traitify.ui.load(assessmentId, ".assessment");
@@ -222,6 +225,63 @@
                                         'pets': localStorage.pets,
                                         'quiet': localStorage.quiet
                                     }));
+                                    for(var i = 0; i < data.length; i++){
+                                        var listItem = new sap.m.Panel({
+                                            headerText: data[i].name,
+                                            width: '90%',
+                                            content: [
+                                            ]
+                                        });
+                                        var info = new sap.m.Text({
+                                            text: data[i].objective+'\ncontact:\n'+data[i].email
+                                        })
+                                        info.addStyleClass('intro');
+                                        if(data[i].personality1){
+                                            listItem.addContent(
+                                                new sap.m.Image({
+                                                    src: 'https://traitify-api.s3.amazonaws.com/badges/'+data[i].personality1.toLowerCase()+'/linear/medium',
+                                                    height: '60px'
+                                                })
+                                            );
+                                            listItem.addContent(
+                                                new sap.m.Image({
+                                                    src: 'https://traitify-api.s3.amazonaws.com/badges/'+data[i].personality2.toLowerCase()+'/linear/medium',
+                                                    height: '60px'
+                                                })
+                                            );
+                                        }
+                                        if(data[i].hacker == 'yes'){
+                                            listItem.addContent(
+                                                new sap.m.Image({
+                                                    src: 'http://i.imgur.com/mQBnTzJ.png',
+                                                    height: '60px'
+                                                })
+                                            );
+                                        }
+                                        if(data[i].pets == 'yes'){
+                                            listItem.addContent(
+                                                new sap.m.Image({
+                                                    src: 'http://i.imgur.com/UK9SXmY.jpg?1',
+                                                    height: '60px'
+                                                })
+                                            );
+                                        }
+                                        if(data[i].quiet == 'yes'){
+                                            listItem.addContent(
+                                                new sap.m.Image({
+                                                    src: 'http://i.imgur.com/4YVP9OT.jpg',
+                                                    height: '60px'
+                                                })
+                                            );
+                                        }
+                                        listItem.addContent(
+                                            info
+                                        );
+                                        results.addItem(
+                                            listItem
+                                        );
+                                    }
+                                    app.to('resultPage');
                                 }
                             }
                         })
@@ -229,20 +289,14 @@
                 })
             ]
         });
-        // var resultPage = new sap.m.Page('resultPage', {
-        //     title: 'Here is list of comatible users',
-        //     content: [
-        //         new sap.m.Button({
-        //             text: 'Get started',
-        //             width: '200px',
-        //             press: function(){
-        //                 app.to('assessmentPage');
-        //             }
-        //         }),
-        //     ]
-        // });
+        var resultPage = new sap.m.Page('resultPage', {
+            title: 'Here is list of comatible users',
+            content: [
+                results
+            ]
+        });
         //Add open ui pages to the application
-        var app = sap.m.App().addPage(homePage).addPage(assessmentPage).placeAt('content');
+        var app = sap.m.App().addPage(homePage).addPage(assessmentPage).addPage(resultPage).placeAt('content');
     </script>​
 </body>
 </html>
