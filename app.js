@@ -62,6 +62,7 @@ router.route('/')
     var profile = new Profile();
     profile.name = req.body.name;
     profile.email = req.body.email;
+    profile.objective = req.body.objective;
     profile.assessment = assessmentId;
     profile.personality1 = req.body.personality1;
     profile.personality2 = req.body.personality2;

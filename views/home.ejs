@@ -34,6 +34,9 @@
         var results = new sap.m.FlexBox();
         results.setWidth('90%');
         results.setDirection('Column');
+        var remainingList = new sap.m.FlexBox();
+        remainingList.setWidth('90%');
+        remainingList.setDirection('Column');        
         var intro = new sap.m.Text({
             class: 'intro',
             text: 'Home for Humanity\n\nAn online application for matching landlords and tenants in the city of San Francisco.'+
@@ -62,6 +65,37 @@
                         localStorage.removeItem('objective');
                         app.to('assessmentPage');
                     }
+                }),
+                new sap.m.Image({
+                    src: 'https://traitify-api.s3.amazonaws.com/badges/adventurous/linear/medium',
+                    width: '14%'
+                }),
+                new sap.m.Image({
+                    src: 'https://traitify-api.s3.amazonaws.com/badges/charismatic/linear/medium',
+                    width: '14%'
+                }),
+                new sap.m.Image({
+                    src: 'https://traitify-api.s3.amazonaws.com/badges/thoughtful/linear/medium',
+                    width: '14%'
+                }),
+                new sap.m.Image({
+                    src: 'https://traitify-api.s3.amazonaws.com/badges/unconventional/linear/medium',
+                    width: '14%'
+                }),
+                new sap.m.Image({
+                    src: 'https://traitify-api.s3.amazonaws.com/badges/social/linear/medium',
+                    width: '14%'
+                }),
+                new sap.m.Image({
+                    src: 'https://traitify-api.s3.amazonaws.com/badges/rational/linear/medium',
+                    width: '14%'
+                }),
+                new sap.m.Image({
+                    src: 'https://traitify-api.s3.amazonaws.com/badges/reliable/linear/medium',
+                    width: '14%'
+                }),
+                new sap.m.Text({
+                    text: '\nCreated by Brian Cottrell, Soutchay Chung Vu, Philip Li, Lynn Cadavona, and Alexis Morelle as an entry in the 2015 Developer Week Hackathon'
                 })
             ]
         });
@@ -77,96 +111,96 @@
                 new sap.m.Panel({
                     width: '300px',
                     content: [
-                new sap.m.Button({
-                    text: 'Start Assessment',
-                    width: '200px',
-                    press: function(){
-                        var positiveResponse;
-                        //Get the assessment id from the model
-                        assessmentId = <%- JSON.stringify(assessmentId) %>;
-                        localStorage.assessment = assessmentId;
-                        //Load the assessment with the id passed from the server
-                        Traitify.ui.load(assessmentId, ".assessment");
-                        //Change the first slide to select tenant or landlord
-                        function changeSlide(){
-                            setTimeout(function(){
-                                if(!document.getElementsByClassName('active')[0]){
-                                    changeSlide();
-                                }else{
-                                    document.getElementsByClassName('active')[0].getElementsByClassName('image')[0].style.background = 'url(http://gentlemaneconomist.com/wp-content/uploads/2014/03/painted-ladies-san-francisco-1024x440.jpg)';
-                                    document.getElementsByClassName('active')[0].getElementsByClassName('image')[0].style.backgroundRepeat = 'no-repeat';
-                                    document.getElementsByClassName('active')[0].getElementsByClassName('image')[0].style.backgroundSize = 'cover';
-                                    document.getElementsByClassName('active')[0].getElementsByClassName('caption')[0].innerHTML = 'Tenant or Landlord';
-                                    document.getElementsByClassName('me')[0].innerHTML = 'Tenant';
-                                    document.getElementsByClassName('not-me')[0].innerHTML = 'Landlord';
-                                    document.getElementsByClassName('me')[0].addEventListener('click', meClicked);
-                                    document.getElementsByClassName('not-me')[0].addEventListener('click', notMeClicked);
-                                    localStorage.slideIndex = 0;
+                        new sap.m.Button({
+                            text: 'Start Assessment',
+                            width: '200px',
+                            press: function(){
+                                var positiveResponse;
+                                //Get the assessment id from the model
+                                assessmentId = <%- JSON.stringify(assessmentId) %>;
+                                localStorage.assessment = assessmentId;
+                                //Load the assessment with the id passed from the server
+                                Traitify.ui.load(assessmentId, ".assessment");
+                                //Change the first slide to select tenant or landlord
+                                function changeSlide(){
+                                    setTimeout(function(){
+                                        if(!document.getElementsByClassName('active')[0]){
+                                            changeSlide();
+                                        }else{
+                                            document.getElementsByClassName('active')[0].getElementsByClassName('image')[0].style.background = 'url(http://gentlemaneconomist.com/wp-content/uploads/2014/03/painted-ladies-san-francisco-1024x440.jpg)';
+                                            document.getElementsByClassName('active')[0].getElementsByClassName('image')[0].style.backgroundRepeat = 'no-repeat';
+                                            document.getElementsByClassName('active')[0].getElementsByClassName('image')[0].style.backgroundSize = 'cover';
+                                            document.getElementsByClassName('active')[0].getElementsByClassName('caption')[0].innerHTML = 'Tenant or Landlord';
+                                            document.getElementsByClassName('me')[0].innerHTML = 'Tenant';
+                                            document.getElementsByClassName('not-me')[0].innerHTML = 'Landlord';
+                                            document.getElementsByClassName('me')[0].addEventListener('click', meClicked);
+                                            document.getElementsByClassName('not-me')[0].addEventListener('click', notMeClicked);
+                                            localStorage.slideIndex = 0;
+                                        }
+                                    }, 100);
                                 }
-                            }, 100);
-                        }
-                        function meClicked(){
-                            positiveResponse = true;
-                            nextSlide();
-                        }
-                        function notMeClicked(){
-                            positiveResponse = false;
-                            nextSlide();
-                        }
-                        //Replace slides with those more specific to renting
-                        function nextSlide(){
-                            document.getElementsByClassName('me')[0].innerHTML = 'Me';
-                            document.getElementsByClassName('not-me')[0].innerHTML = 'Not Me';
-                            switch(localStorage.slideIndex){
-                                case '0':
-                                    if(positiveResponse){
-                                        localStorage.category = 'tenant'
-                                    }else{
-                                        localStorage.category = 'landlord'
+                                function meClicked(){
+                                    positiveResponse = true;
+                                    nextSlide();
+                                }
+                                function notMeClicked(){
+                                    positiveResponse = false;
+                                    nextSlide();
+                                }
+                                //Replace slides with those more specific to renting
+                                function nextSlide(){
+                                    document.getElementsByClassName('me')[0].innerHTML = 'Me';
+                                    document.getElementsByClassName('not-me')[0].innerHTML = 'Not Me';
+                                    switch(localStorage.slideIndex){
+                                        case '0':
+                                            if(positiveResponse){
+                                                localStorage.category = 'tenant'
+                                            }else{
+                                                localStorage.category = 'landlord'
+                                            }
+                                            document.getElementsByClassName('active')[1].getElementsByClassName('image')[0].style.background = "url(http://i.imgur.com/mQBnTzJ.png)";
+                                            document.getElementsByClassName('active')[1].getElementsByClassName('caption')[0].innerHTML = "Hackathon";
+                                        break;
+                                        case '1':
+                                            if(positiveResponse){
+                                                localStorage.hacker = 'yes'
+                                            }else{
+                                                localStorage.hacker = 'no'
+                                            }
+                                            document.getElementsByClassName('active')[1].getElementsByClassName('image')[0].style.background = "url(http://i.imgur.com/4YVP9OT.jpg)";
+                                            document.getElementsByClassName('active')[1].getElementsByClassName('caption')[0].innerHTML = "Quiet";
+                                        break;
+                                        case '2':
+                                            if(positiveResponse){
+                                                localStorage.quiet = 'yes'
+                                            }else{
+                                                localStorage.quiet = 'no'
+                                            }
+                                            document.getElementsByClassName('active')[1].getElementsByClassName('image')[0].style.background = "url(http://i.imgur.com/UK9SXmY.jpg?1)";
+                                            document.getElementsByClassName('active')[1].getElementsByClassName('caption')[0].innerHTML = "Pet Lover";
+                                        break;
+                                        case '3':
+                                            if(positiveResponse){
+                                                localStorage.pets = 'yes'
+                                            }else{
+                                                localStorage.pets = 'no'
+                                            }
+                                        break;
                                     }
-                                    document.getElementsByClassName('active')[1].getElementsByClassName('image')[0].style.background = "url(http://i.imgur.com/mQBnTzJ.png)";
-                                    document.getElementsByClassName('active')[1].getElementsByClassName('caption')[0].innerHTML = "Hackathon";
-                                break;
-                                case '1':
-                                    if(positiveResponse){
-                                        localStorage.hacker = 'yes'
-                                    }else{
-                                        localStorage.hacker = 'no'
+                                    if(document.getElementsByClassName('active')[1]){
+                                        document.getElementsByClassName('active')[1].getElementsByClassName('image')[0].style.backgroundRepeat = "no-repeat";
+                                        document.getElementsByClassName('active')[1].getElementsByClassName('image')[0].style.backgroundSize = "cover";
+                                        localStorage.slideIndex++;
                                     }
-                                    document.getElementsByClassName('active')[1].getElementsByClassName('image')[0].style.background = "url(http://i.imgur.com/4YVP9OT.jpg)";
-                                    document.getElementsByClassName('active')[1].getElementsByClassName('caption')[0].innerHTML = "Quiet";
-                                break;
-                                case '2':
-                                    if(positiveResponse){
-                                        localStorage.quiet = 'yes'
-                                    }else{
-                                        localStorage.quiet = 'no'
+                                    else{
+                                        document.getElementsByClassName('assessment')[0].style.display = "block";
                                     }
-                                    document.getElementsByClassName('active')[1].getElementsByClassName('image')[0].style.background = "url(http://i.imgur.com/UK9SXmY.jpg?1)";
-                                    document.getElementsByClassName('active')[1].getElementsByClassName('caption')[0].innerHTML = "Pet Lover";
-                                break;
-                                case '3':
-                                    if(positiveResponse){
-                                        localStorage.pets = 'yes'
-                                    }else{
-                                        localStorage.pets = 'no'
-                                    }
-                                break;
+                                }
+                                //Replace the first slide when the button is clicked then remove the button
+                                changeSlide();
+                                this.destroy(true);
                             }
-                            if(document.getElementsByClassName('active')[1]){
-                                document.getElementsByClassName('active')[1].getElementsByClassName('image')[0].style.backgroundRepeat = "no-repeat";
-                                document.getElementsByClassName('active')[1].getElementsByClassName('image')[0].style.backgroundSize = "cover";
-                                localStorage.slideIndex++;
-                            }
-                            else{
-                                document.getElementsByClassName('assessment')[0].style.display = "block";
-                            }
-                        }
-                        //Replace the first slide when the button is clicked then remove the button
-                        changeSlide();
-                        this.destroy(true);
-                    }
-                })
+                        })
                     ]
                 }),
                 new sap.m.Panel({
@@ -210,16 +244,18 @@
                                 }else if(!document.getElementsByClassName("tf-personality-traits")[0]){
                                     alert('Please finish the assessment first.');
                                 }else{
+                                    localStorage.personality1 = document.getElementsByClassName('name')[0].innerHTML;
+                                    localStorage.personality2 = document.getElementsByClassName('name')[1].innerHTML;
                                     //Post all user information to the server
                                     var xmlhttp = new XMLHttpRequest();
-                                    xmlhttp.open('POST', '/home', true);
+                                    xmlhttp.open('POST', '/', true);
                                     xmlhttp.setRequestHeader('Content-type', 'application/json');
                                     xmlhttp.send(JSON.stringify({
                                         'name': localStorage.name,
                                         'email': localStorage.email,
                                         'objective': localStorage.objective,
-                                        'personality1': document.getElementsByClassName('name')[0].innerHTML,
-                                        'personality2': document.getElementsByClassName('name')[1].innerHTML,
+                                        'personality1': localStorage.personality1,
+                                        'personality2': localStorage.personality2,
                                         'category': localStorage.category,
                                         'hacker': localStorage.hacker,
                                         'pets': localStorage.pets,
@@ -274,25 +310,43 @@
                                                 })
                                             );
                                         }
-                                        listItem.addContent(
-                                            info
-                                        );
-                                        results.addItem(
-                                            listItem
-                                        );
+                                        if(((localStorage.personality1 == (data[i].personality1 || data[i].personality2)) || 
+                                            (localStorage.personality2 == (data[i].personality1 || data[i].personality2))) && 
+                                            localStorage.category != data[i].category){
+                                            info.setText(data[i].objective+'\ncontact:\n'+data[i].email);
+                                            listItem.addContent(
+                                                info
+                                            );
+                                            results.addItem(listItem);
+                                        }else{
+                                            info.setText(data[i].objective+'\n');
+                                            listItem.addContent(
+                                                info
+                                            );
+                                            remainingList.addItem(listItem);
+                                        }
                                     }
                                     app.to('resultPage');
                                 }
                             }
                         })
                     ]
-                })
+                }),
             ]
         });
         var resultPage = new sap.m.Page('resultPage', {
             title: 'Here is list of comatible users',
             content: [
-                results
+                results,
+                new sap.m.Panel({
+                    width: '100%',
+                    content: [
+                        new sap.m.Text({
+                            text: 'Additional users'
+                        })
+                    ]
+                }),
+                remainingList
             ]
         });
         //Add open ui pages to the application
